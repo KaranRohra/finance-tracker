@@ -1,0 +1,4 @@
+spring:
+  profiles:
+    active:
+    - ${FINTRACK_DEFAULT_PROFILE}

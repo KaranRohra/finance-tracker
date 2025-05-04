@@ -1,0 +1,14 @@
+version: "4"
+
+services:
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: fintrack
+    ports:
+      - "5433:5433"
+    volumes:
+      - data:/var/lib/postgresql/data
