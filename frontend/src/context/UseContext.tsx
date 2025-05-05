@@ -1,9 +1,11 @@
-import { createContext,  ReactNode, useState } from 'react';
+import { createContext, ReactNode, useState } from "react";
 type UserContextType = {
     user: object;
     setUser: React.Dispatch<React.SetStateAction<object>>;
-    };
-export const UserContext = createContext<UserContextType | undefined>(undefined);
+};
+export const UserContext = createContext<UserContextType | undefined>(
+    undefined
+);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState({});
     return (
@@ -11,4 +13,4 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
             {children}
         </UserContext.Provider>
     );
-}
+};
