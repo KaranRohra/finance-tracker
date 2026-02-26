@@ -33,14 +33,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         String email = oAuth2User.getAttribute("email");
 
         User user = userRepository.findByEmail(email)
-                .orElseGet(() -> {
-                    User newUser = new User();
-                    newUser.setEmail(email);
-                    newUser.setGoogleId(oAuth2User.getAttribute("sub"));
-                    newUser.setName(oAuth2User.getAttribute("name"));
-                    newUser.setPictureUrl(oAuth2User.getAttribute("picture"));
-                    return userRepository.save(newUser);
-                });
+                .orElseThrow(() -> new RuntimeException("User not found after OAuth2 login"));
 
         String token = jwtTokenProvider.generateToken(user.getId(), user.getEmail());
 

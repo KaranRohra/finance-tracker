@@ -56,6 +56,7 @@ public class GeminiService {
             throws IOException {
         StringBuilder promptBuilder = new StringBuilder();
         promptBuilder.append("You are a helpful personal finance assistant. ");
+        promptBuilder.append("Please respond in plain text, do NOT use markdown, bold text (asterisks), or lists.\n");
         promptBuilder.append("The user's recent financial data:\n");
         promptBuilder.append(transactionContext);
         promptBuilder.append("\n\nConversation history:\n");

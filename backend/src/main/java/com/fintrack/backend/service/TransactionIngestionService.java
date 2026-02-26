@@ -38,11 +38,17 @@ public class TransactionIngestionService {
         }
 
         int count = 0;
+        int processedThisRun = 0;
         try {
             List<Message> emails = gmailService.fetchBankEmails(user, null);
             log.info("Fetched {} emails for user {}", emails.size(), user.getEmail());
 
             for (Message email : emails) {
+                if (processedThisRun >= 5) {
+                    log.info("Reached processing limit of 5 emails for this sync to avoid rate limits");
+                    break;
+                }
+
                 String messageId = email.getId();
 
                 // Skip already processed emails
@@ -56,9 +62,13 @@ public class TransactionIngestionService {
                     continue;
 
                 try {
+                    processedThisRun++;
+                    Thread.sleep(4000); // 4-second delay to respect 15 RPM free tier limit
+
                     String jsonResponse = geminiService.extractTransactionJson(emailBody);
                     // Strip markdown code blocks if present
-                    jsonResponse = jsonResponse.replaceAll("```json\\n?", "").replaceAll("```\\n?", "").trim();
+                    jsonResponse = jsonResponse.replaceAll("```json[\\r\\n]*", "").replaceAll("[\\r\\n]*```", "")
+                            .trim();
 
                     JsonNode data = objectMapper.readTree(jsonResponse);
 
@@ -75,6 +85,10 @@ public class TransactionIngestionService {
 
                 } catch (Exception e) {
                     log.warn("Failed to process email {}: {}", messageId, e.getMessage());
+                    if (e.getMessage() != null && e.getMessage().contains("429")) {
+                        log.warn("Rate limit hit. Stopping sync for now.");
+                        break;
+                    }
                 }
             }
         } catch (Exception e) {

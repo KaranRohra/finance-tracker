@@ -54,8 +54,12 @@ public class ChatService {
         try {
             aiResponse = geminiService.chatWithContext(userMessage, context, historyMaps);
         } catch (Exception e) {
-            log.error("Gemini chat error: {}", e.getMessage());
-            aiResponse = "I'm sorry, I encountered an error processing your request. Please try again.";
+            log.error("Gemini chat error: {}", e.getMessage(), e);
+            if (e.getMessage() != null && e.getMessage().contains("429")) {
+                aiResponse = "I'm currently receiving too many requests. Please wait a minute and try again!";
+            } else {
+                aiResponse = "I'm sorry, I encountered an error processing your request. Please try again.";
+            }
         }
 
         // Save assistant message

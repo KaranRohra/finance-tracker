@@ -108,7 +108,7 @@ public class GmailService {
                 query.append(" OR ");
         }
         query.append(
-                ") (subject:transaction OR subject:debited OR subject:credited OR subject:payment OR subject:spent OR subject:alert)");
+                ") (subject:transaction OR subject:debited OR subject:credited OR subject:payment OR subject:spent OR subject:alert OR subject:UPI OR subject:transfer OR subject:txn)");
         return query.toString();
     }
 }
